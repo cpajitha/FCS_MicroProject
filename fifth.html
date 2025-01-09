@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption Simulator</title>
+    <link rel="stylesheet" href="fifth.css">
+</head>
+<body>
+    <div class="container">
+        <h2>RSA Algorithm Simulator</h2>
+        
+        <!-- Input fields for primes and message -->
+        <label for="prime-p">Prime Number (p):</label>
+        <input type="text" id="prime-p" placeholder="Enter prime number p">
+
+        <label for="prime-q">Prime Number (q):</label>
+        <input type="text" id="prime-q" placeholder="Enter prime number q">
+
+        <label for="message">Message (integer):</label>
+        <input type="text" id="message" placeholder="Enter message">
+
+        <!-- Action buttons for generating keys, encrypting, and decrypting -->
+        <div class="button-container">
+            <button onclick="generateKeys()">Generate Keys</button>
+            <button onclick="encryptMessage()">Encrypt</button>
+            <button onclick="goToDecryptPage()">Decrypt</button>
+        </div>
+
+        <!-- Result display area -->
+        <div id="results">
+            <h3>Results:</h3>
+            <p id="public-key"></p>
+            <p id="private-key"></p>
+            <p id="encrypted-message"></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate RSA keys
+        async function generateKeys() {
+            const p = parseInt(document.getElementById('prime-p').value);
+            const q = parseInt(document.getElementById('prime-q').value);
+
+            const response = await fetch("http://localhost:8000/rsa/generate-keys", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ p, q }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('public-key').textContent = "Public Key (e, n): " + data.public_key;
+                document.getElementById('private-key').textContent = "Private Key (d, n): " + data.private_key;
+                localStorage.setItem('publicKey', JSON.stringify(data.public_key));
+                localStorage.setItem('privateKey', JSON.stringify(data.private_key));
+            } else {
+                alert('Error generating keys');
+            }
+        }
+
+        // Function to encrypt the message
+        async function encryptMessage() {
+            const message = parseInt(document.getElementById('message').value);
+
+            const response = await fetch("http://localhost:8000/rsa/encrypt", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('encrypted-message').textContent = "Encrypted Message (Cipher): " + data.encrypted_message;
+                localStorage.setItem('encryptedMessage', data.encrypted_message);
+            } else {
+                alert('Error encrypting message');
+            }
+        }
+
+        // Function to navigate to the decryption page (sixth.html)
+        function goToDecryptPage() {
+            window.location.href = 'sixth.html';
+        }
+    </script>
+</body>
+</html>

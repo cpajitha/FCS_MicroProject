@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decryption Results</title>
+    <link rel="stylesheet" href="sixth.css">
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Algorithm Result - Decryption</h1>
+        
+        <!-- Result display area for decryption -->
+        <div id="results">
+            <p id="decrypted-message"></p>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="navigation">
+            <a href="fifth.html"><button>Back to Encryption</button></a>
+            <a href="second.html"><button>Home</button></a>
+        </div>
+    </div>
+
+    <script>
+        // Function to decrypt the encrypted message from localStorage
+        async function decryptMessage() {
+            const encryptedMessage = parseInt(localStorage.getItem('encryptedMessage'));
+
+            const response = await fetch("http://localhost:8000/rsa/decrypt", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: encryptedMessage }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('decrypted-message').textContent = "Decrypted Message: " + data.decrypted_message;
+            } else {
+                alert('Error decrypting message');
+            }
+        }
+
+        // Call decryptMessage() when the page loads
+        window.onload = decryptMessage;
+    </script>
+</body>
+</html>

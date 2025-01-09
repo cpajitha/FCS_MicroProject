@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffie Hellman Key Exchange Results</title>
+    <link rel="stylesheet" href="four.css">
+</head>
+<body>
+    <div class="container">
+      <div id="white-box">
+        <h1>Diffie Hellman Key Exchange Results</h1>
+        <div class="text-container">
+            <textarea id="key-exchange" rows="10" cols="175" readonly></textarea>
+        </div>
+        <div class="navigation">
+            <a href="third.html" class="back-btn"><button>Back</button></a>
+            <a href="second.html" class="home-btn"><button>Home</button></a>
+        </div>
+     </div>
+    </div>
+
+    <script>
+        // Retrieve data from localStorage and display it
+        document.addEventListener("DOMContentLoaded", () => {
+            const resultData = localStorage.getItem("diffieHellmanResult");
+            if (resultData) {
+                const data = JSON.parse(resultData);
+                const outputText = `
+                    Alice's Private Key (a): ${data.alice_private_key}
+                    Bob's Private Key (b): ${data.bob_private_key}
+                    Alice's Public Key (A): ${data.alice_public_key}
+                    Bob's Public Key (B): ${data.bob_public_key}
+                    Alice's Shared Key: ${data.alice_shared_key}
+                    Bob's Shared Key: ${data.bob_shared_key}
+                    Status: ${data.exchange_status}
+                `;
+                document.getElementById("key-exchange").value = outputText;
+            } else {
+                document.getElementById("key-exchange").value = "No result available. Please perform the key exchange first.";
+            }
+        });
+    </script>
+</body>
+</html>

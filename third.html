@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffie-Hellman Key Exchange Simulator</title>
+    <link rel="stylesheet" href="third.css">
+</head>
+<body>
+    <div class="container">
+        <h3>Diffie-Hellman Key Exchange Simulator</h3>
+
+        <label for="prime">Prime Number (p):</label>
+        <input type="text" id="prime" placeholder="Enter prime number">
+
+        <label for="primitive-root">Primitive Root (alpha):</label>
+        <input type="text" id="primitive-root" placeholder="Enter primitive root">
+
+        <button onclick="startKeyExchange()">Start Key Exchange</button>
+
+        <div class="output" id="output">
+            <!-- Output will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        async function startKeyExchange() {
+            const prime = parseInt(document.getElementById("prime").value);
+            const primitiveRoot = parseInt(document.getElementById("primitive-root").value);
+
+            // Validate input
+            if (isNaN(prime) || isNaN(primitiveRoot)) {
+                alert("Please enter valid numbers for both prime and primitive root.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/diffie-hellman/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ p: prime, g: primitiveRoot })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Save the result to local storage to access it on `four.html`
+                    localStorage.setItem("diffieHellmanResult", JSON.stringify(data));
+                    // Redirect to `four.html`
+                    window.location.href = "four.html";
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.detail}`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to communicate with the server.");
+            }
+        }
+    </script>
+</body>
+</html>
